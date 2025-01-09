@@ -1,5 +1,5 @@
 pipeline {
-    agent any  // Exécute sur n'importe quel agent disponible
+    agent any // Exécute sur n'importe quel agent disponible
 
     environment {
         MAVEN_HOME = 'C:/apache-maven-3.9.9-bin/apache-maven-3.9.9'
@@ -18,7 +18,46 @@ pipeline {
         stage('Build with Maven') {
             steps {
                 // Exécute la commande Maven pour construire le projet et exécuter les tests
-                bat 'mvn clean test'  // Si tu veux inclure l'exécution des tests avec mvn clean test, remplace install par test
+                bat 'mvn clean test' // Si tu veux inclure l'exécution des tests avec mvn clean test, remplace install par test
+            }
+        }
+
+        stage('Additional Build Stage') {
+            steps {
+                echo 'Building...' // Étape issue de script 1
+            }
+            post {
+                always {
+                    jiraSendBuildInfo // Étape issue de script 1
+                }
+            }
+        }
+
+        stage('Deploy - Staging') {
+            when {
+                branch 'main' // Condition issue de script 2
+            }
+            steps {
+                echo 'Deploying to Staging from main...' // Étape issue de script 2
+            }
+            post {
+                always {
+                    jiraSendDeploymentInfo environmentId: 'us-stg-1', environmentName: 'us-stg-1', environmentType: 'staging' // Étape issue de script 2
+                }
+            }
+        }
+
+        stage('Deploy - Production') {
+            when {
+                branch 'main' // Condition issue de script 2
+            }
+            steps {
+                echo 'Deploying to Production from main...' // Étape issue de script 2
+            }
+            post {
+                always {
+                    jiraSendDeploymentInfo environmentId: 'us-prod-1', environmentName: 'us-prod-1', environmentType: 'production' // Étape issue de script 2
+                }
             }
         }
     }
