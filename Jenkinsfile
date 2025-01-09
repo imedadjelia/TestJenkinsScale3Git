@@ -2,7 +2,8 @@ pipeline {
     agent any  // Exécute sur n'importe quel agent disponible
 
     environment {
-        MAVEN_HOME = 'C:\apache-maven-3.9.9-bin\apache-maven-3.9.9'  // Remplacez ce chemin par l'emplacement de Maven sur l'agent
+        MAVEN_HOME = 'C:/apache-maven-3.9.9-bin/apache-maven-3.9.9'
+  // Remplacez ce chemin par l'emplacement de Maven sur l'agent
         PATH = "${MAVEN_HOME}/bin:${env.PATH}"
     }
 
