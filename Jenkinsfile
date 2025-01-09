@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         MAVEN_HOME = 'C:/apache-maven-3.9.9-bin/apache-maven-3.9.9'
-  // Remplacez ce chemin par l'emplacement de Maven sur l'agent
+        // Remplacez ce chemin par l'emplacement de Maven sur l'agent
         PATH = "${MAVEN_HOME}/bin:${env.PATH}"
     }
 
@@ -18,11 +18,9 @@ pipeline {
         stage('Build with Maven') {
             steps {
                 // Exécute la commande Maven pour construire le projet et exécuter les tests
-                sh 'mvn clean test'  // Si tu veux inclure l'exécution des tests avec mvn clean test, remplace install par test
+                bat 'mvn clean test'  // Si tu veux inclure l'exécution des tests avec mvn clean test, remplace install par test
             }
         }
-
-        
     }
 
     post {
