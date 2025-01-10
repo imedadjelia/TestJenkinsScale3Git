@@ -35,10 +35,10 @@ pipeline {
 
         stage('Deploy - Staging') {
             when {
-                branch 'PSLIB-3' // Condition issue de script 2
+                branch 'PSLIB-T13' // Condition issue de script 2
             }
             steps {
-                echo 'Deploying to Staging from PSLIB-3...' // Étape issue de script 2
+                echo 'Deploying to Staging from PSLIB-T13...' // Étape issue de script 2
             }
             post {
                 always {
@@ -49,10 +49,10 @@ pipeline {
 
         stage('Deploy - Production') {
             when {
-                branch 'PSLIB-3' // Condition issue de script 2
+                branch 'PSLIB-T13' // Condition issue de script 2
             }
             steps {
-                echo 'Deploying to Production from PSLIB-3...' // Étape issue de script 2
+                echo 'Deploying to Production from PSLIB-T13...' // Étape issue de script 2
             }
             post {
                 always {
