@@ -50,6 +50,16 @@ pipeline {
                     )
 
                     echo "Réponse de l'API Zephyr Scale : ${response.content}"
+        stage('Additional Build Stage') {
+            steps {
+                echo 'Building...' // Étape issue de script 1
+            }
+            post {
+                always {
+                    jiraSendBuildInfo site: 'https://it-students-team-l04nlj9g.atlassian.net'// Étape issue de script 1
+                }
+            }
+        }
                 }
             }
         }
