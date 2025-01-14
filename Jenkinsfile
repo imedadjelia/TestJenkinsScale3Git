@@ -33,10 +33,9 @@ pipeline {
                         versionKey     : "${VERSION_KEY}",
                         testCaseKey    : "${TEST_CASE_KEY}",
                         testCycleKey   : "${TEST_CYCLE_KEY}",
-                        statusName     : "In Progress", // Peut être adapté selon votre workflow
+                        statusName     : "PASS", // Peut être adapté selon votre workflow
                         executionStatus: "PASS", // Remplacez par le statut réel du test (PASS, FAIL, etc.)
-                        startDate      : "2025-01-12T08:00:00Z", // Exemple de date de début
-                        endDate        : "2025-01-12T09:00:00Z"  // Exemple de date de fin
+                         // Exemple de date de fin
                     ]
 
                     def response = httpRequest(
