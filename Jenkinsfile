@@ -5,7 +5,7 @@ pipeline {
         MAVEN_HOME = 'C:/apache-maven-3.9.9-bin/apache-maven-3.9.9'
         PATH = "${MAVEN_HOME}/bin:${env.PATH}"
         API_BASE_URL = 'https://api.zephyrscale.smartbear.com/v2'
-        API_TOKEN = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjb250ZXh0Ijp7ImJhc2VVcmwiOiJodHRwczovL2l0LXN0dWRlbnRzLXRlYW0tbDA0bmxqOWcuYXRsYXNzaWFuLm5ldCIsInVzZXIiOnsiYWNjb3VudElkIjoiNzEyMDIwOmRlMmNmZWRhLTIwYjgtNDZjNC04MWQyLThiMjg3YTZhMzFmOSIsInRva2VuSWQiOiJlZDRmODdhYS0yNTY0LTQ2MTctODk0OS05NTQwZDUyNWJiMjcifX0sImlzcyI6ImNvbS5rYW5vYWgudGVzdC1tYW5hZ2VyIiwic3ViIjoiMDM3NGE5NzgtYzY1Ni0zZTY0LTk0NTgtMGQwNWU4YTExOTRjIiwiZXhwIjoxNzY3Nzc2MTEwLCJpYXQiOjE3MzYyNDAxMTB9._VLeIDiSiy3c2dJiUfS7m-msFamG7G8uSUUWV5ueYds'
+        API_TOKEN = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...'
         PROJECT_KEY = 'PSLIB'
         TEST_CASE_KEY = 'PSLIB-T13'
         TEST_CYCLE_KEY = 'PSLIB-R5'
@@ -50,6 +50,17 @@ pipeline {
 
                     echo "Réponse de l'API Zephyr Scale : ${response.content}"
                 }
+            }
+        }
+
+        stage('Send Deployment Info to Jira') {
+            steps {
+                jiraSendDeploymentInfo(
+                    site: 'https://it-students-team-l04nlj9g.atlassian.net',
+                    environmentId: 'test-env',
+                    environmentName: 'Test',
+                    environmentType: 'testing'
+                )
             }
         }
 
