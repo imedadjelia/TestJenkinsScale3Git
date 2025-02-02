@@ -28,7 +28,7 @@ pipeline {
             }
             post {
                 always {
-                    jiraSendBuildInfo site: 'https://it-students-team-l04nlj9g.atlassian.net'// Étape issue de script 1
+                    jiraSendBuildInfo site: 'https://it-students-team-l04nlj9g.atlassian.net/browse/PSLIB-7'// Étape issue de script 1
                 }
             }
         }
