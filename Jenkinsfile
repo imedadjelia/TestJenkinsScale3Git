@@ -59,7 +59,7 @@ pipeline {
             }
             post {
                 always {
-                    jiraSendBuildInfo site: 'https://it-students-team-l04nlj9g.atlassian.net'
+                    jiraSendBuildInfo site: 'https://it-students-team-l04nlj9g.atlassian.net/browse/PSLIB-4'
                 }
             }
         }
