@@ -1,62 +1,58 @@
 pipeline {
-    agent any // Exécute sur n'importe quel agent disponible
+    agent any
 
     environment {
         MAVEN_HOME = 'C:/apache-maven-3.9.9-bin/apache-maven-3.9.9'
-        // Remplacez ce chemin par l'emplacement de Maven sur l'agent
         PATH = "${MAVEN_HOME}/bin:${env.PATH}"
+        API_BASE_URL = 'https://api.zephyrscale.smartbear.com/v2'
+        API_TOKEN = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjb250ZXh0Ijp7ImJhc2VVcmwiOiJodHRwczovL2l0LXN0dWRlbnRzLXRlYW0tbDA0bmxqOWcuYXRsYXNzaWFuLm5ldCIsInVzZXIiOnsiYWNjb3VudElkIjoiNzEyMDIwOmRlMmNmZWRhLTIwYjgtNDZjNC04MWQyLThiMjg3YTZhMzFmOSIsInRva2VuSWQiOiJlZDRmODdhYS0yNTY0LTQ2MTctODk0OS05NTQwZDUyNWJiMjcifX0sImlzcyI6ImNvbS5rYW5vYWgudGVzdC1tYW5hZ2VyIiwic3ViIjoiMDM3NGE5NzgtYzY1Ni0zZTY0LTk0NTgtMGQwNWU4YTExOTRjIiwiZXhwIjoxNzY3Nzc2MTEwLCJpYXQiOjE3MzYyNDAxMTB9._VLeIDiSiy3c2dJiUfS7m-msFamG7G8uSUUWV5ueYds' 
+        PROJECT_KEY = 'PSLIB' 
     }
 
     stages {
         stage('Checkout') {
             steps {
-                // Récupère le code source du dépôt Git
                 checkout scm
             }
         }
 
         stage('Build with Maven') {
             steps {
-                // Exécute la commande Maven pour construire le projet et exécuter les tests
-                bat 'mvn clean test' // Si tu veux inclure l'exécution des tests avec mvn clean test, remplace install par test
+                bat 'mvn clean test'
+            }
+        }
+
+        stage('Report Cucumber Results to Zephyr Scale') {
+            steps {
+                script {
+                    def cucumberJsonPath = 'target/cucumber-report.json'
+                    def cucumberJson = readFile(file: cucumberJsonPath)
+
+                    def apiUrl = "${API_BASE_URL}/automations/executions/cucumber?projectKey=${PROJECT_KEY}"
+
+                    def response = httpRequest(
+                        acceptType: 'APPLICATION_JSON',
+                        contentType: 'APPLICATION_JSON',
+                        httpMode: 'POST',
+                        url: apiUrl,
+                        customHeaders: [
+                            [name: 'Authorization', value: "Bearer ${API_TOKEN}"]
+                        ],
+                        requestBody: cucumberJson
+                    )
+
+                    echo "Réponse de l'API Zephyr Scale : ${response.content}"
+                }
             }
         }
 
         stage('Additional Build Stage') {
             steps {
-                echo 'Building...' // Étape issue de script 1
+                echo 'Building...'
             }
             post {
                 always {
-                    jiraSendBuildInfo site: 'https://it-students-team-l04nlj9g.atlassian.net'// Étape issue de script 1
-                }
-            }
-        }
-
-        stage('Deploy - Staging') {
-            when {
-                branch 'PSLIB-3' // Condition issue de script 2
-            }
-            steps {
-                echo 'Deploying to Staging from PSLIB-3...' // Étape issue de script 2
-            }
-            post {
-                always {
-                    jiraSendDeploymentInfo environmentId: 'us-stg-1', environmentName: 'us-stg-1', environmentType: 'staging' // Étape issue de script 2
-                }
-            }
-        }
-
-        stage('Deploy - Production') {
-            when {
-                branch 'PSLIB-3' // Condition issue de script 2
-            }
-            steps {
-                echo 'Deploying to Production from PSLIB-3...' // Étape issue de script 2
-            }
-            post {
-                always {
-                    jiraSendDeploymentInfo environmentId: 'us-prod-1', environmentName: 'us-prod-1', environmentType: 'production' // Étape issue de script 2
+                    jiraSendBuildInfo site: 'https://it-students-team-l04nlj9g.atlassian.net/browse/PSLIB-4'
                 }
             }
         }
@@ -64,17 +60,12 @@ pipeline {
 
     post {
         always {
-            // Cette section est exécutée après la fin de la pipeline (peu importe le résultat)
             echo 'Pipeline terminée'
         }
-
         success {
-            // Cette section est exécutée si la pipeline a réussi
             echo 'La pipeline a réussi !'
         }
-
         failure {
-            // Cette section est exécutée si la pipeline a échoué
             echo 'La pipeline a échoué !'
         }
     }
